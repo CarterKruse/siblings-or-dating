@@ -42,3 +42,8 @@ print('Similar similarity:', cosine_similarity(embedding3, embedding4))
 emma_stone1 = get_embedding('./test_faces/emma_stone_1.png')
 emma_stone2 = get_embedding('./test_faces/emma_stone_2.png')
 print('Emma stone similarity:', cosine_similarity(emma_stone1, emma_stone2))
+
+print('Difference similarity:', cosine_similarity(embedding1, emma_stone2))
+print('Difference similarity:', cosine_similarity(embedding2, emma_stone2))
+print('Difference similarity:', cosine_similarity(embedding3, emma_stone2))
+print('Difference similarity:', cosine_similarity(embedding4, emma_stone2))
