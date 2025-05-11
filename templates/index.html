@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>App</title>
+    <style>
+        img { width: 300px; height: auto; margin: 20px; cursor: pointer; }
+        .container { display: flex; justify-content: center; }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Click!</h1>
+    <div class="container">
+        <img id="left" src="{{ url_for('static', filename='images/' + left) }}" onclick="vote('{{ left }}')">
+        <img id="right" src="{{ url_for('static', filename='images/' + right) }}" onclick="vote('{{ right }}')">
+    </div>
+
+    <script>
+        function vote(winner) {
+            fetch('/vote', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({winner: winner})
+            }).then(() => {
+                window.location.reload();
+            });
+        }
+    </script>
+</body>
+</html>
