@@ -1,77 +1,81 @@
-from flask import Flask, render_template, request, jsonify
-import os
-import random
-import json
+from flask import Flask, render_template, request, session, redirect, url_for
+import os, random, json, uuid
+from datetime import timedelta
 
 app = Flask(__name__)
+app.secret_key = 'secret_key'
+app.permanent_session_lifetime = timedelta(days=1)
 
-IMAGE_FOLDER = 'static/images'
-RATING_FILE = 'ratings.json'
-HISTORY_FILE = 'history.json'
-
-K = 32  # Elo constant
-
-# Load image files
-images = [f for f in os.listdir(IMAGE_FOLDER) if f.endswith(('.jpg', '.jpeg', '.png'))]
-
-# Always reset ratings/history on startup
-ratings = {img: 1000 for img in images}
-with open(RATING_FILE, 'w') as f:
-    json.dump(ratings, f)
-
-history = []
-with open(HISTORY_FILE, 'w') as f:
-    json.dump(history, f)
+DATA_DIR = 'user_data'
+os.makedirs(DATA_DIR, exist_ok=True)
 
 @app.route('/')
-def index():
-    # Create all possible matchups
-    all_pairs = [(a, b) for i, a in enumerate(images) for b in images[i+1:]]
+def survey():
+    session.clear()
+    session['user_id'] = str(uuid.uuid4())
+    return render_template('survey.html')
 
-    # Filter out previously seen matchups
-    unseen_pairs = [pair for pair in all_pairs if pair not in history and pair[::-1] not in history]
+@app.route('/submit_survey', methods=['POST'])
+def submit_survey():
+    session['survey'] = {
+        'age': request.form['age'],
+        'gender': request.form['gender'],
+        'preferred_gender': request.form['preferred_gender'],
+        'race': request.form['race']
+    }
 
-    if not unseen_pairs:
-        # Reset history when all matchups have been shown
-        unseen_pairs = all_pairs
-        history.clear()
+    preferred = session['survey']['preferred_gender'].lower()
+    img_path = f'static/{preferred}/images'
+    all_images = [f for f in os.listdir(img_path) if f.endswith(('.jpg', '.jpeg', '.png'))]
+    sample = random.sample(all_images, 10)
+    session['comparison_set'] = sample
+    session['pairs'] = [(sample[i], sample[j]) for i in range(len(sample)) for j in range(i+1, len(sample))]
+    random.shuffle(session['pairs'])
+    session['pairs'] = session['pairs'][:10]
+    session['votes'] = []
+    session['current'] = 0
+    return redirect(url_for('compare'))
 
-    # Choose a random new pair
-    left, right = random.choice(unseen_pairs)
-    return render_template('index.html', left=left, right=right)
+@app.route('/compare')
+def compare():
+    idx = session.get('current', 0)
+    if idx >= len(session['pairs']):
+        return redirect(url_for('rank'))
+
+    left, right = session['pairs'][idx]
+    gender = session['survey']['preferred_gender'].lower()
+    return render_template('compare.html', left=left, right=right, gender=gender, progress=idx+1)
 
 @app.route('/vote', methods=['POST'])
 def vote():
-    data = request.json
-    winner = data['winner']
-    loser = data['loser']
+    winner = request.form['winner']
+    loser = request.form['loser']
+    session['votes'].append({'winner': winner, 'loser': loser})
+    session['current'] += 1
+    return redirect(url_for('compare'))
 
-    # Update Elo rating
-    def expected(rA, rB):
-        return 1 / (1 + 10 ** ((rB - rA) / 400))
+@app.route('/rank')
+def rank():
+    gender = session['survey']['preferred_gender'].lower()
+    images = session['comparison_set']
+    return render_template('rank.html', images=images, gender=gender)
 
-    Ra, Rb = ratings[winner], ratings[loser]
-    Ea, Eb = expected(Ra, Rb), expected(Rb, Ra)
+@app.route('/submit_ranking', methods=['POST'])
+def submit_ranking():
+    ranking = request.json['ranking']
+    user_id = session['user_id']
 
-    ratings[winner] = round(Ra + K * (1 - Ea), 2)
-    ratings[loser] = round(Rb + K * (0 - Eb), 2)
+    data = {
+        'user_id': user_id,
+        'survey': session['survey'],
+        'votes': session['votes'],
+        'ranking': ranking
+    }
 
-    # Save ratings
-    with open(RATING_FILE, 'w') as f:
-        json.dump(ratings, f)
+    with open(f'{DATA_DIR}/{user_id}.json', 'w') as f:
+        json.dump(data, f)
 
-    # Save to history
-    match = [winner, loser] if winner < loser else [loser, winner]
-    history.append(match)
-    with open(HISTORY_FILE, 'w') as f:
-        json.dump(history, f)
-
-    return jsonify(success=True)
-
-@app.route('/rankings')
-def rankings():
-    sorted_ratings = sorted(ratings.items(), key=lambda x: x[1], reverse=True)
-    return jsonify(sorted_ratings)
+    return {'status': 'success'}
 
 if __name__ == '__main__':
     app.run(debug=True)
