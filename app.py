@@ -19,9 +19,9 @@ def survey():
 def submit_survey():
     session['survey'] = {
         'age': request.form['age'],
-        'gender': request.form['gender'],
-        'preferred_gender': request.form['preferred_gender'],
-        'race': request.form['race']
+        'gender': request.form['gender'].lower(),
+        'preferred_gender': request.form['preferred_gender'].lower(),
+        'race': request.form['race'].strip().lower()
     }
 
     preferred = session['survey']['preferred_gender'].lower()
