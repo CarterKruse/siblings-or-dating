@@ -10,16 +10,16 @@
 <body>
     <h1 style="text-align: center;">Click!</h1>
     <div class="container">
-        <img id="left" src="{{ url_for('static', filename='images/' + left) }}" onclick="vote('{{ left }}')">
-        <img id="right" src="{{ url_for('static', filename='images/' + right) }}" onclick="vote('{{ right }}')">
+        <img id="left" src="{{ url_for('static', filename='images/' + left) }}" onclick="vote('{{ left }}', '{{ right }}')">
+        <img id="right" src="{{ url_for('static', filename='images/' + right) }}" onclick="vote('{{ right }}', '{{ left }}')">
     </div>
 
     <script>
-        function vote(winner) {
+        function vote(winner, loser) {
             fetch('/vote', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({winner: winner})
+                body: JSON.stringify({winner: winner, loser: loser})
             }).then(() => {
                 window.location.reload();
             });
