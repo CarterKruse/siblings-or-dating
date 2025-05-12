@@ -1,0 +1,38 @@
+<h2>Rank these faces by attractiveness (top = most attractive)</h2>
+<ul id="sortable">
+    {% for img in images %}
+    <li class="face-item" data-filename="{{ img }}">
+        <img src="{{ url_for('static', filename=gender + '/images/' + img) }}" width="200">
+    </li>
+    {% endfor %}
+</ul>
+<button onclick="submitRanking()">Done</button>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+<script>
+    $(function() {
+        $("#sortable").sortable();
+        $("#sortable").disableSelection();
+    });
+
+    function submitRanking() {
+        let ranking = [];
+        $(".face-item").each(function() {
+            ranking.push($(this).data("filename"));
+        });
+
+        fetch("/submit_ranking", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ranking: ranking})
+        }).then(() => {
+            alert("Thank you! Your responses have been recorded.");
+            window.location.href = "/";
+        });
+    }
+</script>
+<style>
+    #sortable { list-style: none; display: flex; flex-direction: column; align-items: center; padding: 0; }
+    .face-item { margin: 10px; cursor: move; }
+</style>

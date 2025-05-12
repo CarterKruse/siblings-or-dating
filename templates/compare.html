@@ -1,0 +1,14 @@
+<h2>Comparison {{ progress }} of 10</h2>
+<form action="/vote" method="post">
+    <input type="hidden" name="winner" id="winner">
+    <input type="hidden" name="loser" id="loser">
+    <img src="{{ url_for('static', filename=gender + '/images/' + left) }}" width="300" onclick="submitVote('{{ left }}', '{{ right }}')">
+    <img src="{{ url_for('static', filename=gender + '/images/' + right) }}" width="300" onclick="submitVote('{{ right }}', '{{ left }}')">
+</form>
+<script>
+function submitVote(winner, loser) {
+    document.getElementById('winner').value = winner;
+    document.getElementById('loser').value = loser;
+    document.forms[0].submit();
+}
+</script>
