@@ -1,38 +1,121 @@
-<h2>Rank these faces by attractiveness (top = most attractive)</h2>
-<ul id="sortable">
-    {% for img in images %}
-    <li class="face-item" data-filename="{{ img }}">
-        <img src="{{ url_for('static', filename=gender + '/images/' + img) }}" width="200">
-    </li>
-    {% endfor %}
-</ul>
-<button onclick="submitRanking()">Done</button>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rank Faces</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 30px;
+        }
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
-<script>
-    $(function() {
-        $("#sortable").sortable();
-        $("#sortable").disableSelection();
-    });
+        h2 {
+            margin-bottom: 20px;
+        }
 
-    function submitRanking() {
-        let ranking = [];
-        $(".face-item").each(function() {
-            ranking.push($(this).data("filename"));
+        #sortable {
+            list-style: none;
+            padding: 0;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px 20px;
+        }
+
+        .face-item {
+            width: 140px;
+            cursor: move;
+            text-align: center;
+            user-select: none;
+            transition: transform 0.2s ease;
+        }
+
+        .face-item img {
+            width: 100%;
+            border-radius: 8px;
+            transition: box-shadow 0.2s;
+        }
+
+        .face-item:hover img {
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        }
+
+        .position-label {
+            margin-top: 6px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        button {
+            margin-top: 40px;
+            padding: 10px 24px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .ui-sortable-placeholder {
+            border: 2px dashed #007BFF;
+            visibility: visible !important;
+            background: rgba(0, 123, 255, 0.05);
+        }
+
+        .ui-sortable-helper {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <h2>Rank These Faces by Attractiveness<br>(Top Left = Most Attractive)</h2>
+
+    <ul id="sortable">
+        {% for img in images %}
+        <li class="face-item" data-filename="{{ img }}">
+            <img src="{{ url_for('static', filename=gender + '/images/' + img) }}">
+            <div class="position-label">{{ loop.index }}</div>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <button onclick="submitRanking()">Done</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+    <script>
+        $(function() {
+            $("#sortable").sortable({
+                tolerance: "pointer",
+                scroll: true,
+                scrollSensitivity: 40,
+                scrollSpeed: 10,
+                update: updateLabels,
+                placeholder: "ui-sortable-placeholder"
+            });
+            $("#sortable").disableSelection();
+            updateLabels();
         });
 
-        fetch("/submit_ranking", {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ranking: ranking})
-        }).then(() => {
-            alert("Thank you! Your responses have been recorded.");
-            window.location.href = "/";
-        });
-    }
-</script>
-<style>
-    #sortable { list-style: none; display: flex; flex-direction: column; align-items: center; padding: 0; }
-    .face-item { margin: 10px; cursor: move; }
-</style>
+        function updateLabels() {
+            $('#sortable .face-item').each(function(index) {
+                $(this).find('.position-label').text(index + 1);
+            });
+        }
+
+        function submitRanking() {
+            let ranking = [];
+            $(".face-item").each(function() {
+                ranking.push($(this).data("filename"));
+            });
+
+            fetch("/submit_ranking", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ranking: ranking })
+            }).then(() => {
+                alert("Thank you! Your responses have been recorded.");
+                window.location.href = "/";
+            });
+        }
+    </script>
+</body>
+</html>

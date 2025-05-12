@@ -1,14 +1,50 @@
-<h2>Comparison {{ progress }} of 10</h2>
-<form action="/vote" method="post">
-    <input type="hidden" name="winner" id="winner">
-    <input type="hidden" name="loser" id="loser">
-    <img src="{{ url_for('static', filename=gender + '/images/' + left) }}" width="300" onclick="submitVote('{{ left }}', '{{ right }}')">
-    <img src="{{ url_for('static', filename=gender + '/images/' + right) }}" width="300" onclick="submitVote('{{ right }}', '{{ left }}')">
-</form>
-<script>
-function submitVote(winner, loser) {
-    document.getElementById('winner').value = winner;
-    document.getElementById('loser').value = loser;
-    document.forms[0].submit();
-}
-</script>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attractiveness Comparison</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 30px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        .image-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+        img {
+            width: 280px;
+            height: auto;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.2s;
+        }
+        img:hover {
+            border: 2px solid #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <h2>Comparison {{ progress }} of 10</h2>
+    <form action="/vote" method="post">
+        <input type="hidden" name="winner" id="winner">
+        <input type="hidden" name="loser" id="loser">
+        <div class="image-row">
+            <img src="{{ url_for('static', filename=gender + '/images/' + left) }}" onclick="submitVote('{{ left }}', '{{ right }}')">
+            <img src="{{ url_for('static', filename=gender + '/images/' + right) }}" onclick="submitVote('{{ right }}', '{{ left }}')">
+        </div>
+    </form>
+
+    <script>
+        function submitVote(winner, loser) {
+            document.getElementById('winner').value = winner;
+            document.getElementById('loser').value = loser;
+            document.forms[0].submit();
+        }
+    </script>
+</body>
+</html>
