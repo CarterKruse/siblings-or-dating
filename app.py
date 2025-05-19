@@ -28,7 +28,7 @@ def submit_survey():
     }
 
     preferred = session['survey']['preferred_gender']
-    img_path = f'static/{preferred}/images'
+    img_path = f'static/{preferred}'
     all_images = [f for f in os.listdir(img_path) if f.endswith(('.jpg', '.jpeg', '.png'))]
     
     sample = random.sample(all_images, 10)
