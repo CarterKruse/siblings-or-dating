@@ -30,14 +30,28 @@ def submit_survey():
     preferred = session['survey']['preferred_gender']
     img_path = f'static/{preferred}'
     all_images = [f for f in os.listdir(img_path) if f.endswith(('.jpg', '.jpeg', '.png'))]
-    
-    sample = random.sample(all_images, 10)
-    session['comparison_set'] = sample
-    session['pairs'] = [(sample[i], sample[j]) for i in range(len(sample)) for j in range(i+1, len(sample))]
-    random.shuffle(session['pairs'])
-    session['pairs'] = session['pairs'][:10]
+
+    # Sample 45 unique images: 30 for comparison, 15 for ranking
+    if len(all_images) < 45:
+        raise ValueError("Not enough images in directory.")
+
+    selected_images = random.sample(all_images, 45)
+    comparison_set = selected_images[:30]
+    ranking_set = selected_images[30:]
+
+    # Store in session
+    session['comparison_set'] = comparison_set
+    session['ranking_set'] = ranking_set
+
+    # Create 30 random pairs from comparison_set
+    comparison_pairs = [(comparison_set[i], comparison_set[j])
+                        for i in range(len(comparison_set)) for j in range(i+1, len(comparison_set))]
+    random.shuffle(comparison_pairs)
+    session['pairs'] = comparison_pairs[:30]  # Only keep 30 pairs
+
     session['votes'] = []
     session['current'] = 0
+
     return redirect(url_for('compare'))
 
 @app.route('/compare')
@@ -61,7 +75,7 @@ def vote():
 @app.route('/rank')
 def rank():
     gender = session['survey']['preferred_gender'].lower()
-    images = session['comparison_set']
+    images = session['ranking_set']
     return render_template('rank.html', images=images, gender=gender)
 
 @app.route('/submit_ranking', methods=['POST'])
