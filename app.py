@@ -18,15 +18,19 @@ def survey():
 @app.route('/submit_survey', methods=['POST'])
 def submit_survey():
     session['survey'] = {
-        'age': request.form['age'],
+        'age': int(request.form['age']),
         'gender': request.form['gender'].lower(),
         'preferred_gender': request.form['preferred_gender'].lower(),
-        'race': request.form['race'].strip().lower()
+        'race': request.form['race'].strip().lower(),
+        'preferences': request.form['preferences'].lower(),
+        'past_relationships': int(request.form['past_relationships']),
+        'origin': request.form['origin'].strip().lower()
     }
 
-    preferred = session['survey']['preferred_gender'].lower()
+    preferred = session['survey']['preferred_gender']
     img_path = f'static/{preferred}/images'
     all_images = [f for f in os.listdir(img_path) if f.endswith(('.jpg', '.jpeg', '.png'))]
+    
     sample = random.sample(all_images, 10)
     session['comparison_set'] = sample
     session['pairs'] = [(sample[i], sample[j]) for i in range(len(sample)) for j in range(i+1, len(sample))]
