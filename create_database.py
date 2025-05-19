@@ -8,7 +8,7 @@ URL = "https://thispersondoesnotexist.com/"
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 MALE_DIR = "static/male"
 FEMALE_DIR = "static/female"
-TARGET_COUNT = 100
+TARGET_COUNT = 200
 
 # Create directories if not exist
 os.makedirs(MALE_DIR, exist_ok=True)
@@ -89,4 +89,4 @@ while male_count < TARGET_COUNT or female_count < TARGET_COUNT:
     else:
         os.remove("person.jpg")  # Clean up
 
-print("✅ Done! 10 images in each folder.")
+print("✅ Done! Images in each folder.")
