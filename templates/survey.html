@@ -48,7 +48,25 @@
         </select>
 
         <label>Race:</label>
-        <input type="text" name="race" required>
+        <select name="race" required>
+            <option value="white">White</option>
+            <option value="black">Black</option>
+            <option value="asian">Asian</option>
+            <option value="latino">Latino/Hispanic</option>
+            <option value="indigeneous">Indigenous</option>
+            <option value="multiracial">Multiracial</option>
+            <option value="other">Other</option>
+        </select>
+
+        <label>What are you looking for?</label>
+        <select name="preferences" required>
+            <option value="relationship">Relationship</option>
+            <option value="hookup">Hook-Up</option>
+            <option value="decline">Prefer Not to Say</option>
+        </select>
+
+        <label>List the place(s) where you grew up in (at the town/city level)</label>
+        <input type="text" name="origin" required>
 
         <button type="submit">Start Comparison</button>
     </form>
