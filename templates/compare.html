@@ -34,8 +34,8 @@
         <input type="hidden" name="winner" id="winner">
         <input type="hidden" name="loser" id="loser">
         <div class="image-row">
-            <img src="{{ url_for('static', filename=gender + '/images/' + left) }}" onclick="submitVote('{{ left }}', '{{ right }}')">
-            <img src="{{ url_for('static', filename=gender + '/images/' + right) }}" onclick="submitVote('{{ right }}', '{{ left }}')">
+            <img src="{{ url_for('static', filename=gender + '/' + left) }}" onclick="submitVote('{{ left }}', '{{ right }}')">
+            <img src="{{ url_for('static', filename=gender + '/' + right) }}" onclick="submitVote('{{ right }}', '{{ left }}')">
         </div>
     </form>
 

@@ -71,7 +71,7 @@
     <ul id="sortable">
         {% for img in images %}
         <li class="face-item" data-filename="{{ img }}">
-            <img src="{{ url_for('static', filename=gender + '/images/' + img) }}">
+            <img src="{{ url_for('static', filename=gender + '/' + img) }}">
             <div class="position-label">{{ loop.index }}</div>
         </li>
         {% endfor %}
