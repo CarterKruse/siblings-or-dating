@@ -8,7 +8,7 @@ URL = "https://thispersondoesnotexist.com/"
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 MALE_DIR = "static/male"
 FEMALE_DIR = "static/female"
-TARGET_COUNT = 200
+TARGET_COUNT = 150
 
 # Create directories if not exist
 os.makedirs(MALE_DIR, exist_ok=True)
