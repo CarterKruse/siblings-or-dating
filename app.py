@@ -27,6 +27,9 @@ def submit_survey():
         'origin': request.form['origin'].strip().lower()
     }
 
+    # Print the user ID to the terminal
+    print(f"New survey submitted. User ID: {session['user_id']}")
+
     preferred = session['survey']['preferred_gender']
     img_path = f'static/{preferred}'
     all_images = [f for f in os.listdir(img_path) if f.endswith(('.jpg', '.jpeg', '.png'))]
