@@ -22,12 +22,15 @@ def submit_survey():
         'gender': request.form['gender'].lower(),
         'preferred_gender': request.form['preferred_gender'].lower(),
         'race': request.form['race'].strip().lower(),
-        'preferences': request.form['preferences'].lower(),
         'past_relationships': int(request.form['past_relationships']),
-        'origin': request.form['origin'].strip().lower()
+        'places_lived': int(request.form['places_lived']),
+        'place_type': request.form['place_type'].strip().lower()
     }
 
     preferred = session['survey']['preferred_gender']
+    if preferred == 'other':
+        return redirect(url_for('ineligible'))
+    
     img_path = f'static/{preferred}'
     all_images = [f for f in os.listdir(img_path) if f.endswith(('.jpg', '.jpeg', '.png'))]
 
@@ -53,6 +56,10 @@ def submit_survey():
     session['current'] = 0
 
     return redirect(url_for('compare'))
+
+@app.route('/ineligible')
+def ineligible():
+    return render_template('ineligible.html')
 
 @app.route('/compare')
 def compare():
