@@ -33,21 +33,28 @@
     <h2>Participant Survey</h2>
     <form action="/submit_survey" method="post">
         <label>Age:</label>
+        <small>Please enter your current age in years.</small>
         <input type="number" name="age" required>
 
         <label>Gender:</label>
+        <small>Select the gender you identify with.</small>
         <select name="gender" required>
             <option value="male">Male</option>
             <option value="female">Female</option>
+            <option value="non-binary">Non-Binary</option>
+            <option value="other">Other</option>
         </select>
 
         <label>Preferred Gender:</label>
+        <small>Which gender are you most interested in dating?</small>
         <select name="preferred_gender" required>
             <option value="male">Male</option>
             <option value="female">Female</option>
+            <option value="other">Other</option>
         </select>
 
         <label>Race:</label>
+        <small>Select the race you most identify with.</small>
         <select name="race" required>
             <option value="white">White</option>
             <option value="black">Black</option>
@@ -58,18 +65,22 @@
             <option value="other">Other</option>
         </select>
 
-        <label>Looking For:</label>
-        <select name="preferences" required>
-            <option value="relationship">Relationship</option>
-            <option value="hookup">Hook-Up</option>
-            <option value="decline">Prefer Not to Say</option>
-        </select>
-
         <label># Past Relationships:</label>
+        <small>How many romantic relationships have you had (including current)?</small>
         <input type="number" name="past_relationships" required>
 
-        <label>Hometown(s):</label>
-        <input type="text" name="origin" required>
+        <label># of Places Lived (6+ months):</label>
+        <small>How many different places have you lived for at least 6 months?</small>
+        <input type="number" name="places_lived" required>
+
+        <label>General Characteristics of Places Lived:</label>
+        <small>Select the option that best describes the majority of places you've lived.</small>
+        <select name="place_type" required>
+            <option value="rural">Rural</option>
+            <option value="suburban">Suburban</option>
+            <option value="urban">Urban</option>
+            <option value="mixed">Mixed</option>
+        </select>
 
         <button type="submit">Start Comparison</button>
     </form>
